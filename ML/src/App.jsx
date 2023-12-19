@@ -8,6 +8,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [image, setImage] = useState(null);
   const [process, setProcess] = useState(0);
+  const [rs, setRs] = useState(null);
   useEffect(() => {
     const uploadToImgbb = async () => {
       if (!file) return null;
@@ -40,15 +41,19 @@ function App() {
   const handleClick = async () => {
     // Create a FormData object and append the image to it.
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append("image", image);
     // formData.append('text_input', "cmm");
 
     // Make a POST request to the server with the FormData object.
-    const response = await axios.post('http://localhost:8080/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axios.post(
+      "http://localhost:8080/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     // Handle the response.
     if (response.status === 200) {
@@ -56,24 +61,30 @@ function App() {
       // Do something with the response.data.
       console.log("success");
       console.log(response.data);
-      // const data = response.data;
-      // setRs(data);
+      setRs(response.data);
       // navigate('/rs', { state: { result: response.data , resultImg : image ,model : model } });
     } else {
       // An error occurred.
       // Handle the error.
-      console.error('Failed to upload and process the image.');
+      console.error("Failed to upload and process the image.");
     }
-  }
+  };
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-12 mt-14">
-        <ImageUpload
-          onChange={handleSelectImage}
-          handleDeleteImage={handleDeleteImage}
-          progress={process}
-          image={image}
-        ></ImageUpload>
+        <div className="flex items-center justify-center gap-x-[100px]">
+          <ImageUpload
+            onChange={handleSelectImage}
+            handleDeleteImage={handleDeleteImage}
+            progress={process}
+            image={image}
+          ></ImageUpload>
+          {rs &&
+          <span className="text-[35px] inline-flex animate-text-gradient bg-gradient-to-r from-[#b2a8fd] via-[#e766f3] to-[#c7d2fe] bg-[200%_auto] bg-clip-text text-xl text-transparent">
+            Result : {rs}
+          </span>
+          }
+        </div>
         <Button onClick={handleClick}></Button>
       </div>
       <Mouse></Mouse>
